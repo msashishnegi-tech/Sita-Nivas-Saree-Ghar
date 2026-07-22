@@ -1,0 +1,46 @@
+[
+  {
+    "id": "1",
+    "name": "Premium Silk Kurta",
+    "price": 2999,
+    "salePrice": 1999,
+    "category": "men",
+    "image": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=500",
+    "description": "Premium quality silk kurta with elegant design",
+    "stock": 50,
+    "createdAt": "2026-07-22T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Floral Maxi Dress",
+    "price": 3499,
+    "salePrice": 2499,
+    "category": "women",
+    "image": "https://images.unsplash.com/photo-1572804013309-59a88a7e9b60?w=500",
+    "description": "Beautiful floral print maxi dress",
+    "stock": 30,
+    "createdAt": "2026-07-22T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Denim Jacket Classic",
+    "price": 4999,
+    "salePrice": 3499,
+    "category": "men",
+    "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500",
+    "description": "Classic denim jacket for all seasons",
+    "stock": 25,
+    "createdAt": "2026-07-22T00:00:00Z"
+  },
+  {
+    "id": "4",
+    "name": "Designer Lehenga Set",
+    "price": 8999,
+    "salePrice": 6999,
+    "category": "women",
+    "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500",
+    "description": "Elegant designer lehenga for special occasions",
+    "stock": 15,
+    "createdAt": "2026-07-22T00:00:00Z"
+  }
+]

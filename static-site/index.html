@@ -193,61 +193,10 @@
                 </div>
                 <button class="btn-outline hidden md:block">View All</button>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                    <div class="relative aspect-[3/4] overflow-hidden img-zoom">
-                        <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=500" alt="Product" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 badge-sale">-33%</div>
-                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all">
-                            <button class="w-full py-2.5 bg-white text-gray-900 rounded-full font-semibold text-sm hover:bg-[#e94560] hover:text-white transition-colors">+ Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">Premium Silk Kurta</h3>
-                        <div class="flex items-center gap-2 mt-2">
-                            <span class="font-bold text-lg">1,999</span>
-                            <span class="text-gray-400 line-through text-sm">₹2,999</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                    <div class="relative aspect-[3/4] overflow-hidden img-zoom">
-                        <img src="https://images.unsplash.com/photo-1572804013309-59a88a7e9b60?w=500" alt="Product" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 badge-sale">-29%</div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">Floral Maxi Dress</h3>
-                        <div class="flex items-center gap-2 mt-2">
-                            <span class="font-bold text-lg">₹2,499</span>
-                            <span class="text-gray-400 line-through text-sm">3,499</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                    <div class="relative aspect-[3/4] overflow-hidden img-zoom">
-                        <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500" alt="Product" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 badge-sale">-30%</div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">Denim Jacket Classic</h3>
-                        <div class="flex items-center gap-2 mt-2">
-                            <span class="font-bold text-lg">₹3,499</span>
-                            <span class="text-gray-400 line-through text-sm">₹4,999</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                    <div class="relative aspect-[3/4] overflow-hidden img-zoom">
-                        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500" alt="Product" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 badge-sale">-22%</div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">Designer Lehenga Set</h3>
-                        <div class="flex items-center gap-2 mt-2">
-                            <span class="font-bold text-lg">₹6,999</span>
-                            <span class="text-gray-400 line-through text-sm">8,999</span>
-                        </div>
-                    </div>
+            <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Products will be loaded dynamically -->
+                <div class="text-center py-12 col-span-full">
+                    <p class="text-gray-500">Loading products...</p>
                 </div>
             </div>
         </div>
@@ -349,5 +298,52 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Load products from API
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                const products = await response.json();
+                renderProducts(products);
+            } catch (error) {
+                console.error('Failed to load products:', error);
+                document.getElementById('productsGrid').innerHTML = '<p class="text-center text-gray-500 py-12 col-span-full">Failed to load products</p>';
+            }
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            if (products.length === 0) {
+                grid.innerHTML = '<p class="text-center text-gray-500 py-12 col-span-full">No products available</p>';
+                return;
+            }
+
+            grid.innerHTML = products.map(product => {
+                const discount = product.salePrice ? Math.round(((product.price - product.salePrice) / product.price) * 100) : 0;
+                return `
+                    <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
+                        <div class="relative aspect-[3/4] overflow-hidden img-zoom">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                            ${discount > 0 ? `<div class="absolute top-3 left-3 badge-sale">-${discount}%</div>` : ''}
+                            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all">
+                                <button class="w-full py-2.5 bg-white text-gray-900 rounded-full font-semibold text-sm hover:bg-[#e94560] hover:text-white transition-colors">+ Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">${product.name}</h3>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="font-bold text-lg">₹${(product.salePrice || product.price).toLocaleString()}</span>
+                                ${product.salePrice ? `<span class="text-gray-400 line-through text-sm">₹${product.price.toLocaleString()}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load products on page load
+        loadProducts();
+    </script>
 </body>
 </html>
