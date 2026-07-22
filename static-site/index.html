@@ -631,9 +631,9 @@
         setInterval(nextSlide, 5000);
 
         // Product Detail Modal
-        function openProductModal(productId) {
-            const products = getProducts();
-            const product = products.find(p => p.id === productId);
+        async function openProductModal(productId) {
+            const products = await getProducts();
+            const product = products.find(p => p._id === productId);
             if (!product) return;
 
             const discount = product.salePrice ? Math.round(((product.price - product.salePrice) / product.price) * 100) : 0;
@@ -707,19 +707,19 @@
             updateCartUI();
         }
 
-        function addToCart(productId) {
-            const products = getProducts();
-            const product = products.find(p => p.id === productId);
+        async function addToCart(productId) {
+            const products = await getProducts();
+            const product = products.find(p => p._id === productId);
             if (!product) return;
 
             const cart = getCart();
-            const existing = cart.find(item => item.id === productId);
+            const existing = cart.find(item => item.id === product._id);
 
             if (existing) {
                 existing.quantity += 1;
             } else {
                 cart.push({
-                    id: product.id,
+                    id: product._id,
                     name: product.name,
                     price: product.salePrice || product.price,
                     image: product.image,
@@ -813,12 +813,12 @@
             document.getElementById('checkoutModal').classList.remove('active');
         }
 
-        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const cart = getCart();
             const order = {
-                id: 'SN' + Date.now(),
+                orderId: 'SN' + Date.now(),
                 customer: {
                     name: document.getElementById('customerName').value,
                     phone: document.getElementById('customerPhone').value,
@@ -831,22 +831,32 @@
                 subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
                 shipping: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) >= 999 ? 0 : 99,
                 total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + (cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) >= 999 ? 0 : 99),
-                date: new Date().toISOString(),
                 status: 'pending'
             };
 
-            // Save order
-            const orders = JSON.parse(localStorage.getItem('sitaNivasOrders') || '[]');
-            orders.push(order);
-            localStorage.setItem('sitaNivasOrders', JSON.stringify(orders));
+            try {
+                // Save order to API
+                const response = await fetch(`${API_URL}/api/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(order)
+                });
 
-            // Clear cart
-            saveCart([]);
+                if (response.ok) {
+                    // Clear cart
+                    saveCart([]);
 
-            // Show confirmation
-            closeCheckout();
-            document.getElementById('orderId').textContent = order.id;
-            document.getElementById('orderConfirmModal').classList.add('active');
+                    // Show confirmation
+                    closeCheckout();
+                    document.getElementById('orderId').textContent = order.orderId;
+                    document.getElementById('orderConfirmModal').classList.add('active');
+                } else {
+                    alert('Failed to place order. Please try again.');
+                }
+            } catch (error) {
+                console.error('Order error:', error);
+                alert('Error placing order. Please try again.');
+            }
         });
 
         function closeOrderConfirm() {
@@ -856,34 +866,42 @@
         // Initialize cart on load
         updateCartUI();
 
+        // API Configuration
+        const API_URL = 'https://sita-nivas-backend-production.up.railway.app';
+
         // No default products - only show admin-added products
         const defaultProducts = [];
 
-        function getProducts() {
+        async function getProducts() {
             try {
-                const saved = localStorage.getItem('sitaNivasProducts');
-                if (saved) return JSON.parse(saved);
-            } catch(e) {}
+                const response = await fetch(`${API_URL}/api/products`);
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch(e) {
+                console.error('Failed to fetch products from API:', e);
+            }
             return [];
         }
 
-        function loadProducts() {
-            renderProducts(getProducts());
+        async function loadProducts() {
+            const products = await getProducts();
+            renderProducts(products);
         }
 
-        function filterProducts(query) {
-            const all = getProducts();
-            if (!query) return all;
+        function filterProducts(query, products) {
+            if (!query) return products;
             const q = query.toLowerCase().trim();
-            return all.filter(p =>
+            return products.filter(p =>
                 p.name.toLowerCase().includes(q) ||
                 p.category.toLowerCase().includes(q) ||
                 (p.description || '').toLowerCase().includes(q)
             );
         }
 
-        function handleSearch(query) {
-            renderProducts(filterProducts(query));
+        async function handleSearch(query) {
+            const allProducts = await getProducts();
+            renderProducts(filterProducts(query, allProducts));
         }
 
         function renderProducts(products) {
@@ -896,7 +914,7 @@
             grid.innerHTML = products.map(product => {
                 const discount = product.salePrice ? Math.round(((product.price - product.salePrice) / product.price) * 100) : 0;
                 return `
-                    <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100 cursor-pointer" onclick="openProductModal('${product.id}')">
+                    <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100 cursor-pointer" onclick="openProductModal('${product._id}')">
                         <div class="relative aspect-[3/4] overflow-hidden img-zoom">
                             <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
                             ${discount > 0 ? `<div class="absolute top-3 left-3 badge-sale">-${discount}%</div>` : ''}
@@ -931,6 +949,7 @@
             searchInputMobile.addEventListener('input', () => handleSearch(searchInputMobile.value));
         }
 
+        // Load products on page load
         loadProducts();
     </script>
 </body>
