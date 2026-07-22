@@ -23,6 +23,7 @@ const productSchema = new mongoose.Schema({
   salePrice: { type: Number },
   category: { type: String, required: true },
   image: { type: String, required: true },
+  images: { type: [String], default: [] },
   description: { type: String },
   stock: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now }
