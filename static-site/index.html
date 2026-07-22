@@ -14,8 +14,13 @@
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(233, 69, 96, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(233, 69, 96, 0.6); }
+        }
         .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
         .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 2s infinite; }
         .card-hover {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -27,6 +32,7 @@
             background: linear-gradient(135deg, #e94560, #d4af37);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .btn-primary {
             background: linear-gradient(135deg, #e94560, #c0392b);
@@ -42,9 +48,40 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
         }
+        .btn-outline {
+            border: 2px solid #e94560;
+            color: #e94560;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: transparent;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: #e94560;
+            color: white;
+        }
+        .img-zoom {
+            overflow: hidden;
+        }
+        .img-zoom img {
+            transition: transform 0.5s ease;
+        }
+        .img-zoom:hover img {
+            transform: scale(1.1);
+        }
+        .badge-sale {
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
     </style>
 </head>
-<body class="bg-white text-gray-900">
+<body class="bg-white text-gray-900 antialiased">
     <!-- Navbar -->
     <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-lg shadow-lg py-4">
         <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
@@ -55,17 +92,17 @@
                 <span class="text-2xl font-bold tracking-tight">LUXE</span>
             </div>
             <div class="hidden md:flex items-center space-x-8">
-                <a href="#products" class="text-sm font-medium hover:text-[#e94560]">Men</a>
-                <a href="#products" class="text-sm font-medium hover:text-[#e94560]">Women</a>
-                <a href="#products" class="text-sm font-medium hover:text-[#e94560]">Kids</a>
-                <a href="#sale" class="text-sm font-medium hover:text-[#e94560]">Sale</a>
+                <a href="#products" class="text-sm font-medium hover:text-[#e94560] transition-colors">Men</a>
+                <a href="#products" class="text-sm font-medium hover:text-[#e94560] transition-colors">Women</a>
+                <a href="#products" class="text-sm font-medium hover:text-[#e94560] transition-colors">Kids</a>
+                <a href="#sale" class="text-sm font-medium hover:text-[#e94560] transition-colors">Sale</a>
             </div>
             <div class="flex items-center space-x-4">
-                <button class="p-2 hover:bg-gray-100 rounded-full">🔍</button>
-                <button class="p-2 hover:bg-gray-100 rounded-full">👤</button>
-                <button class="relative p-2 hover:bg-gray-100 rounded-full">
-                    🛒
-                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-[#e94560] text-white text-xs rounded-full flex items-center justify-center">0</span>
+                <button class="p-2 hover:bg-gray-100 rounded-full transition-colors"></button>
+                <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">👤</button>
+                <button class="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+                    
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-[#e94560] text-white text-xs rounded-full flex items-center justify-center font-bold animate-pulse-glow">0</span>
                 </button>
             </div>
         </div>
@@ -107,37 +144,41 @@
             <p class="text-gray-500 text-lg">Find what suits you best</p>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <a href="#products" class="group relative rounded-2xl overflow-hidden card-hover aspect-[3/4]">
+            <a href="#products" class="group relative rounded-2xl overflow-hidden card-hover img-zoom aspect-[3/4]">
                 <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=600" alt="Men" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-6">
                     <h3 class="text-white text-xl font-bold">Men</h3>
                     <p class="text-white/70 text-sm">200+ Styles</p>
                 </div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-[#e94560] rounded-2xl transition-all"></div>
             </a>
-            <a href="#products" class="group relative rounded-2xl overflow-hidden card-hover aspect-[3/4]">
+            <a href="#products" class="group relative rounded-2xl overflow-hidden card-hover img-zoom aspect-[3/4]">
                 <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600" alt="Women" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-6">
                     <h3 class="text-white text-xl font-bold">Women</h3>
                     <p class="text-white/70 text-sm">350+ Styles</p>
                 </div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-[#e94560] rounded-2xl transition-all"></div>
             </a>
-            <a href="#products" class="group relative rounded-2xl overflow-hidden card-hover aspect-[3/4]">
+            <a href="#products" class="group relative rounded-2xl overflow-hidden card-hover img-zoom aspect-[3/4]">
                 <img src="https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=600" alt="Kids" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-6">
                     <h3 class="text-white text-xl font-bold">Kids</h3>
                     <p class="text-white/70 text-sm">150+ Styles</p>
                 </div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-[#e94560] rounded-2xl transition-all"></div>
             </a>
-            <a href="#products" class="group relative rounded-2xl overflow-hidden card-hover aspect-[3/4]">
+            <a href="#products" class="group relative rounded-2xl overflow-hidden card-hover img-zoom aspect-[3/4]">
                 <img src="https://images.unsplash.com/photo-1523779105320-d1cd346ff52b?w=600" alt="Accessories" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-6">
                     <h3 class="text-white text-xl font-bold">Accessories</h3>
                     <p class="text-white/70 text-sm">100+ Items</p>
                 </div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-[#e94560] rounded-2xl transition-all"></div>
             </a>
         </div>
     </section>
@@ -150,41 +191,45 @@
                     <h2 class="text-4xl font-bold mb-2">Trending Now 🔥</h2>
                     <p class="text-gray-500">Most loved styles this season</p>
                 </div>
+                <button class="btn-outline hidden md:block">View All</button>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                    <div class="relative aspect-[3/4] overflow-hidden">
+                    <div class="relative aspect-[3/4] overflow-hidden img-zoom">
                         <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=500" alt="Product" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 bg-gradient-to-r from-[#e94560] to-[#ff6b6b] text-white px-3 py-1 rounded-full text-xs font-semibold">-33%</div>
+                        <div class="absolute top-3 left-3 badge-sale">-33%</div>
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all">
+                            <button class="w-full py-2.5 bg-white text-gray-900 rounded-full font-semibold text-sm hover:bg-[#e94560] hover:text-white transition-colors">+ Add to Cart</button>
+                        </div>
                     </div>
                     <div class="p-4">
-                        <h3 class="font-semibold text-sm">Premium Silk Kurta</h3>
+                        <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">Premium Silk Kurta</h3>
                         <div class="flex items-center gap-2 mt-2">
-                            <span class="font-bold text-lg">₹1,999</span>
+                            <span class="font-bold text-lg">1,999</span>
                             <span class="text-gray-400 line-through text-sm">₹2,999</span>
                         </div>
                     </div>
                 </div>
                 <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                    <div class="relative aspect-[3/4] overflow-hidden">
+                    <div class="relative aspect-[3/4] overflow-hidden img-zoom">
                         <img src="https://images.unsplash.com/photo-1572804013309-59a88a7e9b60?w=500" alt="Product" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 bg-gradient-to-r from-[#e94560] to-[#ff6b6b] text-white px-3 py-1 rounded-full text-xs font-semibold">-29%</div>
+                        <div class="absolute top-3 left-3 badge-sale">-29%</div>
                     </div>
                     <div class="p-4">
-                        <h3 class="font-semibold text-sm">Floral Maxi Dress</h3>
+                        <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">Floral Maxi Dress</h3>
                         <div class="flex items-center gap-2 mt-2">
                             <span class="font-bold text-lg">₹2,499</span>
-                            <span class="text-gray-400 line-through text-sm">₹3,499</span>
+                            <span class="text-gray-400 line-through text-sm">3,499</span>
                         </div>
                     </div>
                 </div>
                 <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                    <div class="relative aspect-[3/4] overflow-hidden">
+                    <div class="relative aspect-[3/4] overflow-hidden img-zoom">
                         <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500" alt="Product" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 bg-gradient-to-r from-[#e94560] to-[#ff6b6b] text-white px-3 py-1 rounded-full text-xs font-semibold">-30%</div>
+                        <div class="absolute top-3 left-3 badge-sale">-30%</div>
                     </div>
                     <div class="p-4">
-                        <h3 class="font-semibold text-sm">Denim Jacket Classic</h3>
+                        <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">Denim Jacket Classic</h3>
                         <div class="flex items-center gap-2 mt-2">
                             <span class="font-bold text-lg">₹3,499</span>
                             <span class="text-gray-400 line-through text-sm">₹4,999</span>
@@ -192,15 +237,15 @@
                     </div>
                 </div>
                 <div class="card-hover rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                    <div class="relative aspect-[3/4] overflow-hidden">
+                    <div class="relative aspect-[3/4] overflow-hidden img-zoom">
                         <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500" alt="Product" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 bg-gradient-to-r from-[#e94560] to-[#ff6b6b] text-white px-3 py-1 rounded-full text-xs font-semibold">-22%</div>
+                        <div class="absolute top-3 left-3 badge-sale">-22%</div>
                     </div>
                     <div class="p-4">
-                        <h3 class="font-semibold text-sm">Designer Lehenga Set</h3>
+                        <h3 class="font-semibold text-sm text-gray-800 hover:text-[#e94560] transition-colors">Designer Lehenga Set</h3>
                         <div class="flex items-center gap-2 mt-2">
                             <span class="font-bold text-lg">₹6,999</span>
-                            <span class="text-gray-400 line-through text-sm">₹8,999</span>
+                            <span class="text-gray-400 line-through text-sm">8,999</span>
                         </div>
                     </div>
                 </div>
@@ -215,7 +260,7 @@
                 <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920" alt="Sale" class="w-full h-[400px] object-cover">
                 <div class="absolute inset-0 bg-gradient-to-r from-[#1a1a2e]/90 to-transparent flex items-center">
                     <div class="p-12 max-w-lg">
-                        <span class="bg-gradient-to-r from-[#e94560] to-[#ff6b6b] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 inline-block">MEGA SALE</span>
+                        <span class="badge-sale mb-4 inline-block">MEGA SALE</span>
                         <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">Up to 60% OFF</h2>
                         <p class="text-white/70 text-lg mb-6">On selected styles. Use code <span class="text-[#d4af37] font-bold">LUXE60</span></p>
                         <button class="btn-primary">Grab the Deal</button>
@@ -235,7 +280,7 @@
                     <p class="text-white/50 text-sm">On orders above ₹999</p>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl mb-3">↩️</div>
+                    <div class="text-4xl mb-3">️</div>
                     <h4 class="text-white font-bold mb-1">Easy Returns</h4>
                     <p class="text-white/50 text-sm">7-day return policy</p>
                 </div>
