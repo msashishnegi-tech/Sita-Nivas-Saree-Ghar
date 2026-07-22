@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - LUXE Fashion</title>
+    <title>Admin Panel - Sita Nivas Saree Ghar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .modal {
@@ -62,9 +62,12 @@
                     </div>
                     <h1 class="text-xl font-bold">Admin Dashboard</h1>
                 </div>
-                <button onclick="logout()" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                    Logout
-                </button>
+                <div class="flex items-center gap-3">
+                    <a href="/" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-sm">View Website</a>
+                    <button onclick="logout()" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        Logout
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -95,7 +98,23 @@
                     </button>
                 </div>
                 <div id="productsList" class="p-6">
-                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Export/Import Section -->
+            <div class="bg-white rounded-xl shadow-sm mt-6">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Backup & Restore</h2>
+                    <p class="text-gray-500 text-sm mt-1">Export your products data or import from a backup</p>
+                </div>
+                <div class="p-6 flex flex-wrap gap-4">
+                    <button onclick="exportProducts()" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        Export Data (JSON)
+                    </button>
+                    <label class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors cursor-pointer">
+                        Import Data
+                        <input type="file" accept=".json" onchange="importProducts(event)" class="hidden">
+                    </label>
                 </div>
             </div>
         </main>
@@ -130,7 +149,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Sale Price (₹)</label>
-                        <input type="number" id="productSalePrice" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#e94560] outline-none">
+                        <input type="number" id="productSalePrice" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#e94560] outline-none" placeholder="Leave empty if no discount">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
@@ -138,7 +157,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Image URL *</label>
-                        <input type="url" id="productImage" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#e94560] outline-none" placeholder="https://...">
+                        <input type="url" id="productImage" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#e94560] outline-none" placeholder="https://example.com/image.jpg">
                     </div>
                 </div>
                 <div>
@@ -158,41 +177,91 @@
     </div>
 
     <script>
-        let authToken = localStorage.getItem('adminToken');
+        // Admin credentials
+        const ADMIN_USERNAME = 'GEET02100102';
+        const ADMIN_PASSWORD = '***';
+
+        // Default products
+        const defaultProducts = [
+            {
+                id: "1",
+                name: "Premium Silk Kurta",
+                price: 2999,
+                salePrice: 1999,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=500",
+                description: "Premium quality silk kurta with elegant design",
+                stock: 50
+            },
+            {
+                id: "2",
+                name: "Floral Maxi Dress",
+                price: 3499,
+                salePrice: 2499,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1572804013309-59a88a7e9b60?w=500",
+                description: "Beautiful floral print maxi dress",
+                stock: 30
+            },
+            {
+                id: "3",
+                name: "Denim Jacket Classic",
+                price: 4999,
+                salePrice: 3499,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500",
+                description: "Classic denim jacket for all seasons",
+                stock: 25
+            },
+            {
+                id: "4",
+                name: "Designer Lehenga Set",
+                price: 8999,
+                salePrice: 6999,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500",
+                description: "Elegant designer lehenga for special occasions",
+                stock: 15
+            }
+        ];
+
         let products = [];
 
+        // Load products from localStorage
+        function loadProductsFromStorage() {
+            const saved = localStorage.getItem('sitaNivasProducts');
+            if (saved) {
+                products = JSON.parse(saved);
+            } else {
+                products = [...defaultProducts];
+                saveProducts();
+            }
+        }
+
+        // Save products to localStorage
+        function saveProducts() {
+            localStorage.setItem('sitaNivasProducts', JSON.stringify(products));
+        }
+
         // Check if already logged in
-        if (authToken) {
+        const isLoggedIn = localStorage.getItem('adminLoggedIn');
+        if (isLoggedIn === 'true') {
+            loadProductsFromStorage();
             showDashboard();
-            loadProducts();
         }
 
         // Login Form
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            try {
-                const response = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    authToken = data.token;
-                    localStorage.setItem('adminToken', authToken);
-                    showDashboard();
-                    loadProducts();
-                } else {
-                    document.getElementById('loginError').textContent = data.message;
-                    document.getElementById('loginError').classList.remove('hidden');
-                }
-            } catch (error) {
-                document.getElementById('loginError').textContent = 'Login failed. Please try again.';
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                loadProductsFromStorage();
+                showDashboard();
+            } else {
+                document.getElementById('loginError').textContent = 'Invalid username or password';
                 document.getElementById('loginError').classList.remove('hidden');
             }
         });
@@ -200,23 +269,13 @@
         function showDashboard() {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
+            renderProducts();
+            updateStats();
         }
 
         function logout() {
-            localStorage.removeItem('adminToken');
-            authToken = null;
+            localStorage.removeItem('adminLoggedIn');
             location.reload();
-        }
-
-        async function loadProducts() {
-            try {
-                const response = await fetch('/api/products');
-                products = await response.json();
-                renderProducts();
-                updateStats();
-            } catch (error) {
-                console.error('Failed to load products:', error);
-            }
         }
 
         function renderProducts() {
@@ -252,8 +311,8 @@
                                     </td>
                                     <td class="py-4 capitalize">${p.category}</td>
                                     <td class="py-4">
-                                        <p class="font-semibold">₹${p.salePrice || p.price}</p>
-                                        ${p.salePrice ? `<p class="text-sm text-gray-400 line-through">₹${p.price}</p>` : ''}
+                                        <p class="font-semibold">₹${(p.salePrice || p.price).toLocaleString()}</p>
+                                        ${p.salePrice ? `<p class="text-sm text-gray-400 line-through">₹${p.price.toLocaleString()}</p>` : ''}
                                     </td>
                                     <td class="py-4">
                                         <span class="${p.stock > 0 ? 'text-green-600' : 'text-red-600'} font-semibold">
@@ -311,10 +370,11 @@
             document.getElementById('productModal').classList.remove('active');
         }
 
-        document.getElementById('productForm').addEventListener('submit', async (e) => {
+        document.getElementById('productForm').addEventListener('submit', (e) => {
             e.preventDefault();
 
             const product = {
+                id: document.getElementById('productId').value || Date.now().toString(),
                 name: document.getElementById('productName').value,
                 category: document.getElementById('productCategory').value,
                 price: parseInt(document.getElementById('productPrice').value),
@@ -324,53 +384,60 @@
                 description: document.getElementById('productDescription').value
             };
 
-            const id = document.getElementById('productId').value;
-            const method = id ? 'PUT' : 'POST';
-            
-            if (id) product.id = id;
-
-            try {
-                const response = await fetch('/api/admin/products', {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify(product)
-                });
-
-                if (response.ok) {
-                    closeModal();
-                    loadProducts();
-                    alert(id ? 'Product updated successfully!' : 'Product added successfully!');
-                } else {
-                    alert('Failed to save product');
-                }
-            } catch (error) {
-                alert('Error saving product');
+            const existingIndex = products.findIndex(p => p.id === product.id);
+            if (existingIndex >= 0) {
+                products[existingIndex] = product;
+            } else {
+                products.push(product);
             }
+
+            saveProducts();
+            renderProducts();
+            updateStats();
+            closeModal();
+            alert(existingIndex >= 0 ? 'Product updated!' : 'Product added!');
         });
 
-        async function deleteProduct(id) {
+        function deleteProduct(id) {
             if (!confirm('Are you sure you want to delete this product?')) return;
+            products = products.filter(p => p.id !== id);
+            saveProducts();
+            renderProducts();
+            updateStats();
+            alert('Product deleted!');
+        }
 
-            try {
-                const response = await fetch(`/api/admin/products?id=${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
+        function exportProducts() {
+            const dataStr = JSON.stringify(products, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'products-backup.json';
+            a.click();
+        }
+
+        function importProducts(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        products = imported;
+                        saveProducts();
+                        renderProducts();
+                        updateStats();
+                        alert('Products imported successfully!');
+                    } else {
+                        alert('Invalid file format');
                     }
-                });
-
-                if (response.ok) {
-                    loadProducts();
-                    alert('Product deleted successfully!');
-                } else {
-                    alert('Failed to delete product');
+                } catch (err) {
+                    alert('Error reading file');
                 }
-            } catch (error) {
-                alert('Error deleting product');
-            }
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>
