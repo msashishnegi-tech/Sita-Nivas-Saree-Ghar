@@ -191,7 +191,7 @@
 
     <script>
         // API Configuration
-        const API_URL = 'https://sita-nivas-saree-ghar-production.up.railway.app';
+        const API_URL = window.location.origin;
         
         // Admin credentials
         const ADMIN_USERNAME = 'GEET02100102';
@@ -290,10 +290,10 @@
                                     </td>
                                     <td class="py-4">
                                         <div class="flex gap-2">
-                                            <button onclick="editProduct('${p._id}')" class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 text-sm">
+                                            <button onclick="editProduct('${p.id}')" class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 text-sm">
                                                 Edit
                                             </button>
-                                            <button onclick="deleteProduct('${p._id}')" class="px-3 py-1 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 text-sm">
+                                            <button onclick="deleteProduct('${p.id}')" class="px-3 py-1 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 text-sm">
                                                 Delete
                                             </button>
                                         </div>
@@ -323,11 +323,11 @@
         }
 
         function editProduct(id) {
-            const product = products.find(p => p._id === id);
+            const product = products.find(p => p.id === id);
             if (!product) return;
 
             document.getElementById('modalTitle').textContent = 'Edit Product';
-            document.getElementById('productId').value = product._id;
+            document.getElementById('productId').value = product.id;
             document.getElementById('productName').value = product.name;
             document.getElementById('productCategory').value = product.category;
             document.getElementById('productPrice').value = product.price;
