@@ -83,3 +83,4 @@ module.exports = async (req, res) => {
       await kv.set('products', f); res.json({ success: true });
     } else { res.status(405).json({ error: 'Method not allowed' }); }
   } catch (e) { res.status(500).json({ error: e.message };
+};
