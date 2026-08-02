@@ -4,7 +4,6 @@
     { "src": "static-site/**", "use": "@vercel/static" }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/static-site/$1" }
   ]
 }
