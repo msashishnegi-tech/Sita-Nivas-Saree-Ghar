@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/static-site/$1" }
+    { "source": "/", "destination": "/static-site/index.html" },
+    { "source": "/admin.html", "destination": "/static-site/admin.html" }
   ]
 }
