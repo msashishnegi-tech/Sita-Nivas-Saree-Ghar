@@ -1,6 +1,10 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/static-site/index.html" },
-    { "source": "/admin.html", "destination": "/static-site/admin.html" }
+  "builds": [
+    { "src": "static-site/**", "use": "@vercel/static" },
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/static-site/$1" }
   ]
 }
